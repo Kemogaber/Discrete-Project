@@ -1,22 +1,37 @@
 #include <iostream>
 #include <string>
-#include <cctype>
-#include <vector>
 
 using namespace std;
 
-// Function to compute the modular inverse of a number 'a' under modulo 'm' using Extended Euclidean Algorithm
-int modInverse(int a, int m) {
-    a = a % m;
-    for (int x = 1; x < m; x++) {
-        if ((a * x) % m == 1)
-            return x;
+int modInverse(int a,int m){
+    int t1=0,t2=1,t,r1=m,r2=a; 
+    while(r2!=0){ // applying extended euclidean algorithm to get t1 which is the mod inverse we are looking for
+        int q,r;
+        q=r1/r2;
+        r=r1%r2;
+        t=t1-t2*q; 
+        r1=r2;
+        r2=r;
+        t1=t2;
+        t2=t;
     }
-    return -1; // If no modular inverse exists
+    if(r1==1){
+        while(t1<0){ // mod inverse must be bewteen 0 & m-1
+            t1=t1+m;
+    }
+        return t1%m; // returning mod inverse of a and m with gcd of 1
+    }
+    else return -1; // not coprime so no mod inverse
+}
+int search(string s,char c){
+    for(int i=0;i<s.length();i++){
+        if(s[i]==c) return i;
+    }
+    return -1;
 }
 
 // Function to decrypt the Affine ciphered message
-string affineDecrypt(string cipherText, int a, int b, int m) {
+string affineDecrypt(string cipherText, int a, int b, int m,string alphabet) {
     string decryptedText = "";
     int a_inv = modInverse(a, m);
 
@@ -25,47 +40,37 @@ string affineDecrypt(string cipherText, int a, int b, int m) {
         return "";
     }
 
-    // Traverse through each character in the cipherText
     for (char c : cipherText) {
-        if (isupper(c)) {
-            // Decrypt uppercase letters (A-Z)
-            decryptedText += char(((a_inv * (c - 'A' - b)) % m + m) % m + 'A');
-        }
-        else if (islower(c)) {
-            // Decrypt lowercase letters (a-z)
-            decryptedText += char(((a_inv * (c - 'a' - b)) % m + m) % m + 'a');
-        }
-        else if (isdigit(c)) {
-            // Decrypt digits (0-9)
-            decryptedText += char(((a_inv * (c - '0' - b)) % 10 + 10) % 10 + '0');
-        }
-        else if (ispunct(c) || isspace(c)) {
-            // Non-alphabet characters (punctuation, spaces)
-            decryptedText += c;
-        }
+        int L;
+        L=(a_inv * (search(alphabet,c)-b))%m;
+        while(L<0){
+                L=L+m;
+            }
+        decryptedText += alphabet[L];
     }
-
     return decryptedText;
 }
 
 int main() {
-    string cipherText;
+    string cipherText,alphabet;
     int a, b;
-
     cout << "Enter the affine ciphered message: ";
     getline(cin, cipherText);
-    
-    cout << "Enter the key a (must be coprime with the alphabet size): ";
+    cout << "Enter a: ";
     cin >> a;
-    
-    cout << "Enter the key b (shift): ";
+    cout << "Enter b: ";
     cin >> b;
-    
-    // The size of the alphabet (26 for letters, 10 for digits, including punctuations will increase the size)
-    int m = 26;  // For English alphabet, you can change this for more complex alphabets.
+    alphabet=" ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //  SPACE is added
+    int m = alphabet.size();  
+
+    // Check if 'a' and 'm' are coprime
+    if (modInverse(a, m) == -1) {
+        cout << "Key 'a' must be coprime with the alphabet size!" << endl;
+        return 1;
+    }
 
     // Decrypt the message
-    string decryptedMessage = affineDecrypt(cipherText, a, b, m);
+    string decryptedMessage = affineDecrypt(cipherText, a, b, m,alphabet);
 
     if (!decryptedMessage.empty()) {
         cout << "The decrypted message is: " << decryptedMessage << endl;
