@@ -47,7 +47,7 @@ string affineDecrypt(string cipherText, int a, int b, int m,string alphabet) {
         while(L<0){
                 L=L+m;
             }
-        decryptedText += char(L+'A');
+        decryptedText += alphabet[L];
     }
     return decryptedText;
 }
@@ -63,8 +63,8 @@ int main() {
     cin >> b;
     cin.ignore();
     cout << "Enter Alphabet: ";
-    getline(cin,alphabet);
-    alphabet=" "+alphabet;
+    getline(cin,alphabet); // copy this for English (don't copy quotations): "ABCDEFGHIJKLMNOPQRSTUVWXYZ" (space is automatically added)
+    alphabet=" "+alphabet; //  SPACE is added
     int m = alphabet.size();  
 
     // Check if 'a' and 'm' are coprime
