@@ -63,12 +63,6 @@ int main() {
     alphabet=" ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //  SPACE is added
     int m = alphabet.size();  
 
-    // Check if 'a' and 'm' are coprime
-    if (modInverse(a, m) == -1) {
-        cout << "Key 'a' must be coprime with the alphabet size!" << endl;
-        return 1;
-    }
-
     // Decrypt the message
     string decryptedMessage = affineDecrypt(cipherText, a, b, m,alphabet);
 
