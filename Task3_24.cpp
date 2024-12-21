@@ -3,39 +3,50 @@
 
 using namespace std;
 
-// Encrypt a single character using the Affine Cipher
+//encrypt a single character function
 char encryptChar(char ch, int a, int b, const string &alphabet) {
-    int m = alphabet.length();
-    int index = alphabet.find(ch);
-    if (index != string::npos) { //check if the index exists in the alphabet
-        int encryptedIndex = (a * index + b) % m;
-        return alphabet[encryptedIndex];
-    }
-    return ch; 
+    int length = alphabet.length();
+    int index = 0;
+    bool check = false;
+
+for(int i = 0; i<length;i++){ //loop to make sure character exists in alphabet
+    if(alphabet[i]==ch){
+        index = i;
+        check = true; }
 }
-//Encrypt the whole message by calling encryptChar
-string encryptMessage(const string &message, int a, int b, const string &alphabet) {
-    string encryptedMessage = "";
-    for (char ch : message) {
-        encryptedMessage += encryptChar(ch, a, b, alphabet);
+
+    if (check) { //checking if find function returned no position 
+        int new_index = (a * index + b) % length;
+        return alphabet[new_index];
     }
-    return encryptedMessage;
+    return ch; //if didn't exist -> return character itself without modification
+}
+
+//encrypt the message using encryptChar function
+string encryptMessage(const string &message, int a, int b, const string &alphabet) {
+    string final = "";
+    for (char ch : message) {
+        final += encryptChar(ch, a, b, alphabet);
+    }
+    return final;
 }
 
 int main() {
-    // Samoan alphabet 
-    string alphabet = " AEIOUFGLMNPSTVHKR";
+    //samoan alphabet --> length : 18 (17 characters + space ( index 0 ) )
 
-    // Message to encrypt
+    string alphabet = " AEIOUFGLMNPSTVHKR"; // changing alphabet to be generic and fit different cases
+
+
+    //example 
     string message = "OU TE INU KOFE I LE TAEAO";
 
-    // Affine cipher keys
+    //cipher keys
     int a = 11;  
     int b = 17; 
 
-    string encryptedMessage = encryptMessage(message, a, b, alphabet);
+    string final = encryptMessage(message, a, b, alphabet);
     cout << "Original Message:" << message << endl;
-    cout << "Encrypted Message:" << encryptedMessage << endl;
+    cout << "Encrypted Message:" << final << endl; //printing final results
 
     return 0;
 }
