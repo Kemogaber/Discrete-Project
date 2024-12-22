@@ -46,10 +46,11 @@ public:
     friend IfThen operator>>(Expression& e1, Expression&& e2);
     friend IfThen operator>>(Expression&& e1, Expression& e2);
     friend IfThen operator>>(Expression& e1, Expression& e2);
-    friend Iff operator<=>(Expression&& e1, Expression&& e2);
-    friend Iff operator<=>(Expression& e1, Expression&& e2);
-    friend Iff operator<=>(Expression&& e1, Expression& e2);
-    friend Iff operator<=>(Expression& e1, Expression& e2);
+    // spaceship operator "<=>" requires C++20, uncomment if you have C++20 or higher
+//    friend Iff operator<=>(Expression&& e1, Expression&& e2);
+//    friend Iff operator<=>(Expression& e1, Expression&& e2);
+//    friend Iff operator<=>(Expression&& e1, Expression& e2);
+//    friend Iff operator<=>(Expression& e1, Expression& e2);
 };
 
 class Argument {
@@ -298,18 +299,19 @@ IfThen operator>>(Expression& e1, Expression& e2) {
 }
 
 
-Iff operator<=>(Expression&& e1, Expression&& e2) {
-    return {e1, e2};
-}
-Iff operator<=>(Expression&& e1, Expression& e2) {
-    return {e1, e2};
-}
-Iff operator<=>(Expression& e1, Expression&& e2) {
-    return {e1, e2};
-}
-Iff operator<=>(Expression& e1, Expression& e2) {
-    return {e1, e2};
-}
+// spaceship operator "<=>" requires C++20, uncomment if you have C++20 or higher
+//Iff operator<=>(Expression&& e1, Expression&& e2) {
+//    return {e1, e2};
+//}
+//Iff operator<=>(Expression&& e1, Expression& e2) {
+//    return {e1, e2};
+//}
+//Iff operator<=>(Expression& e1, Expression&& e2) {
+//    return {e1, e2};
+//}
+//Iff operator<=>(Expression& e1, Expression& e2) {
+//    return {e1, e2};
+//}
 
 std::vector<std::vector<VariableValue>> Expression::all_ordered_combinations(std::vector<Variable *>& variables) {
     std::vector<std::vector<VariableValue>> rows;
@@ -389,6 +391,7 @@ bool Argument::satisfiable(std::vector<Variable *> variables, Expression *conclu
     return !Expression::truth_set_intersection(conclusion_ts, premises_ts).empty();
 }
 
+
 // main
 int main(int argc, char** argv) {
     Variable
@@ -399,7 +402,7 @@ int main(int argc, char** argv) {
 
     bool valid = Argument::valid(
                     // variables
-                    {&f, &b, &h},
+                    {&f, &s, &b, &h},
 
                     // conclusion
                     h | f,
@@ -407,10 +410,10 @@ int main(int argc, char** argv) {
                     // premises
                     f | b,
                     b | s,
-                    h <=> b
+                    h >> b
             );
 
-    std::cout << valid << std::endl;
+    std::cout << (valid ? "The Argument is valid." : "The argument is not valid.") << std::endl;
 
     return 0;
 }
